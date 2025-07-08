@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ Metavault – Web3 Wallet Playground
 
-## Getting Started
+**⚡ Metavault** is an interactive seed-based wallet playground that lets users generate, view, and manage Solana and Ethereum wallets effortlessly. Built with `Next.js 15`, `Redux`, `Tailwind CSS v4`, and `OGL` for a stunning background — it's a smooth blend of frontend polish and cryptographic utility.
 
-First, run the development server:
+![image](https://github.com/user-attachments/assets/320c641d-ce5c-4965-a2ad-19f90e85f28d)
+
+---
+
+## ✨ Features
+
+* 🔐 Seed phrase based wallet generation
+* 🌱 Create Solana & Ethereum wallets using `bip39`, `tweetnacl`, and `ethers`
+* ⚡ Dynamic particle + lightning background with OGL
+* 🎛 Clipboard copy, eye toggle, and key masking for security
+* 💡 Dark mode with smooth transitions
+* 🍞 Instant feedback with Sonner toasts
+* 🧠 Redux store for global mnemonic state
+
+---
+
+## 🧑‍💻 Tech Stack
+
+| Category       | Tech                                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Framework**  | [Next.js 15](https://nextjs.org/) + Turbopack                                                                 |
+| **Blockchain** | [ethers.js](https://docs.ethers.io/), [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)         |
+| **HD Wallets** | [bip39](https://github.com/bitcoinjs/bip39), [ed25519-hd-key](https://www.npmjs.com/package/ed25519-hd-key)   |
+| **Redux**      | [Redux Toolkit](https://redux-toolkit.js.org/) + [React-Redux](https://react-redux.js.org/)                   |
+| **Styling**    | [Tailwind CSS v4](https://tailwindcss.com/), `tw-animate-css`                                                 |
+| **UI/UX**      | [Radix UI](https://www.radix-ui.com/), [Lucide](https://lucide.dev/), [Sonner](https://sonner.emilkowal.dev/) |
+| **Effects**    | [OGL](https://github.com/oframe/ogl) for WebGL particles and lightning                                        |
+
+---
+
+## 🚀 Getting Started
 
 ```bash
+# 1. Clone
+git clone https://github.com/satyam-code45/metavault.git
+cd metavault
+
+# 2. Install dependencies
+npm install
+
+# 3. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Folder Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+📆 metavault/
+📄 src/
+│  📄 app/
+│  │  📄 layout.tsx         # Root layout
+│  │  📄 page.tsx           # Main wallet UI
+│  📄 components/
+│  │  📄 ui/                # Button, Dropdown, Sonner, etc.
+│  │  📄 ethereumWallet.tsx # ETH wallet generator
+│  │  📄 solanaWallet.tsx   # Solana wallet generator
+│  │  📄 lightning.tsx      # OGL lightning background
+│  │  📄 particles.tsx      # Particle effect
+│  │  📄 seed-phrase.tsx    # Seed phrase input + generator
+│  📄 store/                 # Redux slices and provider
+│  📄 lib/                   # (Optional) custom utilities
+📄 public/                    # Static files
+📄 styles/                    # globals.css (Tailwind)
+📄 .eslintrc, tailwind.config.ts, next.config.ts
+📄 README.md
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📜 Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev     # Start dev server (Turbopack)
+npm run build   # Create production build
+npm run start   # Run production server
+npm run lint    # Run linter
+```
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 👤 Author
 
-## Deploy on Vercel
+Built with ❤️ by [Satyam](https://github.com/satyam-code45)
+[![GitHub Followers](https://img.shields.io/github/followers/satyam-code45?label=Follow%20Me\&style=social)](https://github.com/satyam-code45)
+[![X](https://img.shields.io/twitter/follow/satyam45dev?label=Follow%20on%20X\&style=social\&logo=twitter)](https://x.com/satyam45dev)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+
+MIT Licensed. [Read here](LICENSE)
+
+---
+
+> Like the project? Consider giving it a ⭐ on GitHub!
