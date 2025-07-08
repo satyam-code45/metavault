@@ -4,6 +4,7 @@ import { HDNodeWallet } from "ethers";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Button } from "./ui/button";
+import { Eye, EyeOff, Copy, Check } from "lucide-react";
 
 interface Wallets {
   publicKey: string;
@@ -18,36 +19,162 @@ export const EthWallet = () => {
   const mnemonic = mnemonicArray.join(" ");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [wallets, setWallets] = useState<Wallets[]>([]);
+  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
+  const [copiedKey, setCopiedKey] = useState<{
+    pubKey: string;
+    type: "public" | "private";
+  } | null>(null);
+  const [disabledKeys, setDisabledKeys] = useState<
+    Record<string, "public" | "private" | null>
+  >({});
+
+  const toggleVisibility = (publicKey: string) => {
+    setVisibleKeys((prev) => ({
+      ...prev,
+      [publicKey]: !prev[publicKey],
+    }));
+  };
+
+  const copyToClipboard = async (
+    key: string,
+    publicKey: string,
+    type: "public" | "private"
+  ) => {
+    await navigator.clipboard.writeText(key);
+    setCopiedKey({ pubKey: publicKey, type });
+    setDisabledKeys((prev) => ({ ...prev, [publicKey]: type }));
+
+    setTimeout(() => {
+      setCopiedKey(null);
+      setDisabledKeys((prev) => ({ ...prev, [publicKey]: null }));
+    }, 2000);
+  };
 
   return (
-    <div>
+    <div className="w-full flex flex-col grow px-4 py-6 md:p-6 backdrop-blur-xl rounded-xl shadow-md space-y-6 border border-muted text-white">
+      <h2 className="text-xl font-semibold text-center">
+        Ethereum Wallet Generator
+      </h2>
+
       <Button
         onClick={async () => {
           const seed = await mnemonicToSeed(mnemonic);
-          const derivationPath = `m/44'/60'/${currentIndex}'/0/0`;
-          const hdNode = HDNodeWallet.fromSeed(seed).derivePath(derivationPath);
+          const path = `m/44'/60'/${currentIndex}'/0/0`;
+          const hdNode = HDNodeWallet.fromSeed(seed).derivePath(path);
 
           setWallets((prev) => [
-            ...prev,
             {
               publicKey: hdNode.address,
               secretKey: hdNode.privateKey,
             },
+            ...prev, // Newest on top
           ]);
 
           setCurrentIndex(currentIndex + 1);
         }}
+        className="w-full h-10 md:h-12 text-sm md:text-base"
       >
-        Add ETH wallet
+        Add ETH Wallet
       </Button>
 
-      <div className="mt-4 space-y-2">
-        {wallets.map((w, i) => (
-          <div key={i}>
-            <div><strong>Public:</strong> {w.publicKey}</div>
-            <div><strong>Private:</strong> {w.secretKey}</div>
+      <div className="h-[30vh] overflow-y-auto space-y-4">
+        {wallets.length === 0 ? (
+          <div className="text-sm text-muted-foreground text-center">
+            No wallets generated yet.
           </div>
-        ))}
+        ) : (
+          wallets.map((wallet) => {
+            const isVisible = visibleKeys[wallet.publicKey];
+            const privateDisplay = isVisible
+              ? wallet.secretKey
+              : "************";
+
+            const isPublicDisabled =
+              disabledKeys[wallet.publicKey] === "public";
+            const isPrivateDisabled =
+              disabledKeys[wallet.publicKey] === "private";
+
+            const copiedIsPublic =
+              copiedKey?.pubKey === wallet.publicKey &&
+              copiedKey.type === "public";
+            const copiedIsPrivate =
+              copiedKey?.pubKey === wallet.publicKey &&
+              copiedKey.type === "private";
+
+            return (
+              <div
+                key={wallet.publicKey}
+                className="p-4 border border-muted rounded-lg bg-zinc-800 overflow-x-auto"
+              >
+                {/* --- Public Key --- */}
+                <div className="text-sm font-mono flex flex-wrap justify-between items-center gap-2">
+                  <span className="font-bold">Public Key:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          wallet.publicKey,
+                          wallet.publicKey,
+                          "public"
+                        )
+                      }
+                      className="hover:text-zinc-300"
+                      disabled={isPublicDisabled}
+                    >
+                      {isPublicDisabled ? (
+                        <Check size={18} />
+                      ) : (
+                        <Copy size={18} />
+                      )}
+                    </button>
+                    {copiedIsPublic && (
+                      <span className="text-xs text-green-400">Copied!</span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs break-all mb-2 font-mono">
+                  {wallet.publicKey}
+                </div>
+
+                {/* --- Private Key --- */}
+                <div className="text-sm font-mono flex flex-wrap justify-between items-center gap-2">
+                  <span className="font-bold">Private Key:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleVisibility(wallet.publicKey)}
+                      className="hover:text-zinc-300"
+                    >
+                      {isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          wallet.secretKey,
+                          wallet.publicKey,
+                          "private"
+                        )
+                      }
+                      className="hover:text-zinc-300"
+                      disabled={isPrivateDisabled}
+                    >
+                      {isPrivateDisabled ? (
+                        <Check size={18} />
+                      ) : (
+                        <Copy size={18} />
+                      )}
+                    </button>
+                    {copiedIsPrivate && (
+                      <span className="text-xs text-green-400">Copied!</span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-xs break-all font-mono mt-1 min-h-[1.5rem]">
+                  {privateDisplay}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
